@@ -5,10 +5,12 @@ body {
   padding: 0;
 }
 
-h1 {
+h1, h2 {
   text-align: center;
   color: #333;
 }
+
+
 
 table {
   margin: 20px auto;
@@ -41,4 +43,10 @@ tr:hover {
 
 .loading {
   text-align: center;
+}
+
+section {
+  margin: 80px auto;
+  padding: 0 50px;
+  max-width: 1200px;
 }

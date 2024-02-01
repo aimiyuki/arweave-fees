@@ -2,20 +2,34 @@ import { useEffect, useState } from "react";
 import "./App.css";
 
 import {
+  HistoricalPrice,
   StoragePrices,
+  getHistoricalPriceStats,
   getStoragePriceStats,
   unitSymbols,
 } from "./data-fetcher";
+import PriceChart from "./PriceChart";
+
+function ErrorOrLoading({ error }: { error?: string }) {
+  return error ? <p>{error}</p> : <p className="loading">Loading...</p>;
+}
 
 function App() {
   const [stats, setStats] = useState<StoragePrices | null>(null);
+  const [historicalPrices, setHistoricalPrices] = useState<HistoricalPrice[]>();
   const [error, setError] = useState("");
 
   useEffect(() => {
     getStoragePriceStats()
       .then(setStats)
       .catch(() => {
-        setError("Could not fetch the data");
+        setError("Could not fetch current price data");
+      });
+
+    getHistoricalPriceStats()
+      .then(setHistoricalPrices)
+      .catch(() => {
+        setError("Could not fetch historical price data");
       });
   }, []);
 
@@ -23,11 +37,7 @@ function App() {
     <>
       <h1>Arweave Storage Prices</h1>
       {!stats ? (
-        error ? (
-          <p>{error}</p>
-        ) : (
-          <p className="loading">Loading...</p>
-        )
+        <ErrorOrLoading error={error} />
       ) : (
         <table>
           <thead>
@@ -49,6 +59,14 @@ function App() {
             })}
           </tbody>
         </table>
+      )}
+      {!historicalPrices ? (
+        <ErrorOrLoading error={error} />
+      ) : (
+        <section>
+          <h2>Historical prices</h2>
+          <PriceChart prices={historicalPrices} />
+        </section>
       )}
     </>
   );
